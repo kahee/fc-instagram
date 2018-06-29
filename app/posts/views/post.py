@@ -24,7 +24,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
-from ..forms import PostForm, PostModelForm
+from ..forms import PostForm, PostModelForm, CommentModelForm
 from ..models import Post, Comment
 
 
@@ -35,9 +35,13 @@ from ..models import Post, Comment
 # 3. index view는 post_list로 redirect시켜주는 기능을 함
 
 def post_list(request):
+    form = CommentModelForm()
     posts = Post.objects.all()
+    comments = Comment.objects.all()
     context = {
         'posts': posts,
+        'comment_form': form,
+        'comments': comments,
     }
     return render(request, 'posts/post_list.html', context)
 

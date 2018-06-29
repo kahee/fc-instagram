@@ -1,20 +1,19 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+from ..models import Comment, Post
 from ..forms import CommentModelForm
 
 
 @login_required
-def comment_create(request):
+def comment_create(request, pk):
     if request.method == 'POST':
         form = CommentModelForm(request.POST)
         if form.is_valid():
-            pass
-    else:
-        form = CommentModelForm()
+            Comment.objects.create(
+                post=Post.objects.get(pk=pk),
+                author=request.user,
+                content=form.cleaned_data['content']
+            )
 
-    context = {
-        'comment_form': form,
-    }
-
-    return render(request, 'post/post_list.html', context)
+    return redirect('posts:post-list')
