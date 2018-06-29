@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from members.exceptions import RelationNotExist, DuplicateRelationException
+from .exceptions import RelationNotExist, DuplicateRelationException
 
 
 class User(AbstractUser):

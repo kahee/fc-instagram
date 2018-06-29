@@ -24,8 +24,8 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 
-from .forms import PostForm, PostModelForm
-from .models import Post
+from ..forms import PostForm, PostModelForm
+from ..models import Post, Comment
 
 
 # '/'에 접근했을 때 post_list URL로 이동 (root url접근시 자동으로)
