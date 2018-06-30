@@ -145,3 +145,9 @@ class Relation(models.Model):
             to_user=self.to_user.username,
             type=self.get_relation_type_display(),
         )
+
+    def toggle_like_post(self, post):
+        like, like_created = self.like_post_info_list.get_or_create(post=post)
+        if not like_created:
+            like.delete()
+        return like_created
