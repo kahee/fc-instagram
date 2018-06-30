@@ -52,17 +52,31 @@ class User(AbstractUser):
             )
 
     def block(self, to_user):
-        q = self.relations_by_from_user.filter(
-            to_user=to_user,
-            relation_type=Relation.RELATION_TYPE_BLOCK,
-        )
-        print(q)
+        q = self.relations_by_from_user.filter(to_user=to_user)
+
         if q:
-            return q.delete()
+            user = self.relations_by_from_user.get(to_user=to_user)
+            user.relation_type = Relation.RELATION_TYPE_BLOCK
+            user.save()
+
         else:
             return self.relations_by_from_user.create(
                 to_user=to_user,
                 relation_type=Relation.RELATION_TYPE_BLOCK,
+            )
+
+    def unblook(self, to_user):
+        q = self.relations_by_from_user.filter(
+            to_user=to_user,
+            relation_type=Relation.RELATION_TYPE_BLOCK,
+        )
+        if q:
+            q.delete()
+        else:
+            raise RelationNotExist(
+                from_user=self,
+                to_user=to_user,
+                relation_type='Follow',
             )
 
     @property
@@ -90,8 +104,8 @@ class User(AbstractUser):
         # 나를 follow중인 User QuerySet
         # return User.objects.filter(pk__in=self.follower_relations.values('from_user'))
         return User.objects.filter(
-            relations_by_to_from__to_user=self,
-            relations_by_to_from__relation_type=Relation.RELATION_TYPE_FOLLOW,
+            relations_by_from_user__to_user=self,
+            relations_by_from_user__relation_type=Relation.RELATION_TYPE_FOLLOW,
         )
 
     @property
@@ -150,7 +164,7 @@ class Relation(models.Model):
 
     class Meta:
         unique_together = (
-            ('from_user', 'to_user'),
+            ('from_user', 'to_user', 'relation_type'),
         )
 
     def __str__(self):

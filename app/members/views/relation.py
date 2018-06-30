@@ -40,3 +40,12 @@ def block_toggle(request, user_pk):
     to_user = User.objects.get(pk=user_pk)
     request.user.block(to_user)
     return redirect('posts:post-list')
+
+
+@require_POST
+@login_required
+def unblock_toggle(request, user_pk):
+    to_user = User.objects.get(pk=user_pk)
+    print(to_user)
+    request.user.unblook(to_user)
+    return redirect('posts:post-list')

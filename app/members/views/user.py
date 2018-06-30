@@ -8,6 +8,17 @@ from ..forms import SignupForm
 User = get_user_model()
 
 
+def my_page(request):
+    following_users = request.user.following
+    follower_users = request.user.followers
+
+    context = {
+        'following_users': following_users,
+        'follower_users': follower_users,
+    }
+    return render(request, 'members/mypage.html', context )
+
+
 def login_view(request):
     # 1. POST요청이 왔는데, 요청이 올바르면서 <- 코드에서 어느 위치인지 파악
     # 2.  GET paramter에 'next'값이 존재할 경우 <-- GET parameter는 request.GET으로 접근

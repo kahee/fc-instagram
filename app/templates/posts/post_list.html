@@ -42,19 +42,15 @@
                                 {% endif %}
                             {% endif %}
 
-
-                            <form action="{% url 'members:block' user_pk=post.author.pk %}" method="POST"
-                                  style="display: inline-block;">
-                                {% csrf_token %}
-                                {% if not post.author == user %}
-                                    {% if not post.author in user.block_users %}
+                            {% if not post.author == user %}
+                                {% if not post.author in user.block_users %}
+                                    <form action="{% url 'members:block' user_pk=post.author.pk %}" method="POST"
+                                          style="display: inline-block;">
+                                        {% csrf_token %}
                                         <button type="submit" class="btn btn-outline-danger btn-sm">- 차단하기</button>
-                                    {% else %}
-                                        <button type="submit" class="btn btn-danger btn-sm">- 차단해제</button>
-                                    {% endif %}
+                                    </form>
                                 {% endif %}
-                            </form>
-
+                            {% endif %}
 
                         </div>
                         <form action="{% url 'posts:post-delete' pk=post.pk %}" method="POST" class="float-right">

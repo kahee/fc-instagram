@@ -10,4 +10,6 @@ urlpatterns = [
     path('<int:user_pk>/follow/', views.follow_toggle, name='follow'),
     path('<int:user_pk>/unfollow/', views.unfollow_toggle, name='unfollow'),
     path('<int:user_pk>/block/', views.block_toggle, name='block'),
+    path('<int:user_pk>/unblock/', views.unblock_toggle, name='unblock'),
+    path('mypage/', views.my_page, name='my-page'),
 ]

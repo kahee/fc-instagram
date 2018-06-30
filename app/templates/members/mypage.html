@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card mb-3">
+        <div class="card-header">Following</div>
+        <ul class="list-group list-group-flush">
+            {% for following in following_users %}
+                <li class="list-group-item">
+                    {% if following.img_profile %}
+                        <img src="{{ following.img_profile.url }}"
+                             style="width: 30px;"
+                             class="rounded-circle float-left mr-1"
+                             alt="">
+                    {% endif %}
+                    {{ following.username }}
+                    {% if not following in user.following %}
+                        <form action="{% url 'members:follow' user_pk=following.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm float-right">+ Follow</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'members:unfollow' user_pk=following.pk %}" method="POST"
+                              style="display: inline-block;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm float-right"> Following</button>
+                        </form>
+                    {% endif %}
+
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Followers</div>
+        <ul class="list-group list-group-flush">
+            {% for follower in follower_users %}
+                <li class="list-group-item">
+                    {% if follower.img_profile %}
+                        <img src="{{ follower.img_profile.url }}"
+                             style="width: 30px;"
+                             class="rounded-circle float-left mr-1"
+                             alt="">
+                    {% endif %}
+                    {{ follower.username }}
+                    {% if not follower in user.block_users %}
+                        <form action="{% url 'members:block' user_pk=follower.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm float-right">차단하기</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'members:unblock' user_pk=follower.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm float-right">차단해제</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
