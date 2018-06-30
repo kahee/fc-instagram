@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load comment_extra %}
 {% block content %}
     {% for post in posts %}
         <div class="card mb-3">
@@ -47,9 +47,26 @@
             <div>
                 {% if comments %}
                     <ul class="list-group">
-                        {% for comment in comments %}
-                            <li  class="list-group-item">{{ comment.author }} - {{ comment.content }}</li>
+                        {% for comment in post|get_comment %}
+                            <li class="list-group-item">{{ comment.author }} - {{ comment.content }}
+                                <ul>
+                                    {% for re_comment in comment.re_comments.all %}
+                                        <li>{{ re_comment.author }} - {{ re_comment.content }}</li>
+                                    {% endfor %}
+                                </ul>
+                                <form action="{% url 'posts:re-comment-create' pk=comment.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    {% for comment_field in comment_form %}
+                                        {{ comment_field }}
+                                    {% endfor %}
+                                    <button type="submit" style='width:10%;float: right;'
+                                            class="btn btn-outline-dark btn-sm">
+                                        답글 달기
+                                    </button>
+                                </form>
+                            </li>
                         {% endfor %}
+
                     </ul>
                 {% endif %}
             </div>
