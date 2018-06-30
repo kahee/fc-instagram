@@ -40,9 +40,18 @@
                                 </form>
                             {% endif %}
                         {% endif %}
-                        <form action="" method="POST" style="display: inline-block;">
+
+
+                        <form action="{% url 'members:block' user_pk=post.author.pk %}" method="POST"
+                              style="display: inline-block;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-sm">- Block</button>
+                            {% if not post.author == user %}
+                                {% if not post.author in user.block_users %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">- 차단하기</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-danger btn-sm">- 차단해제</button>
+                                {% endif %}
+                            {% endif %}
                         </form>
 
 

@@ -51,6 +51,20 @@ class User(AbstractUser):
                 relation_type='Follow',
             )
 
+    def block(self, to_user):
+        q = self.relations_by_from_user.filter(
+            to_user=to_user,
+            relation_type=Relation.RELATION_TYPE_BLOCK,
+        )
+        print(q)
+        if q:
+            return q.delete()
+        else:
+            return self.relations_by_from_user.create(
+                to_user=to_user,
+                relation_type=Relation.RELATION_TYPE_BLOCK,
+            )
+
     @property
     def following(self):
         # 내가 follow중인 User QuerySet리턴
@@ -85,8 +99,8 @@ class User(AbstractUser):
         # 내가 block중인 User QuerySet
         # return User.objects.filter(pk__in=self.block_relations.values('to_user'))
         return User.objects.filter(
-            relations_by_to_to__from_user=self,
-            relations_by_to_to__relation_type=Relation.RELATION_TYPE_BLOCK,
+            relations_by_to_user__from_user=self,
+            relations_by_to_user__relation_type=Relation.RELATION_TYPE_BLOCK,
         )
 
     @property

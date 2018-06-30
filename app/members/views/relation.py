@@ -38,5 +38,5 @@ def unfollow_toggle(request, user_pk):
 @login_required
 def block_toggle(request, user_pk):
     to_user = User.objects.get(pk=user_pk)
-    request.user.block_users(to_user)
+    request.user.block(to_user)
     return redirect('posts:post-list')
