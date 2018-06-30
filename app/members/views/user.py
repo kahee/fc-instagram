@@ -1,8 +1,7 @@
 from django.contrib.auth import authenticate, login, get_user_model, logout
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
-from .forms import SignupForm
+from ..forms import SignupForm
 
 # User클래스 자체를 가져올때는 get_user_model()
 # ForeignKey에 User모델을 지정할때는 settings.AUTH_USER_MODEL
@@ -134,31 +133,3 @@ def signup_bak(request):
             login(request, user)
             return redirect('index')
     return render(request, 'members/signup.html', context)
-
-
-@login_required
-def follow_toggle(request, user_pk):
-    """
-    * GET요청은 처리하지 않음
-    * 로그인 된 상태에서만 작동
-
-    POST요청일 때
-        1. request.POST로 'user_pk'값을 전달받음
-            pk가 user_pk인 User를 user에 할당
-        2. request.user의 
-    :param request:
-    :return:
-    """
-    if request.method == 'POST':
-        to_user = User.objects.get(pk=user_pk)
-        request.user.follow(to_user)
-
-    return redirect('posts:post-list')
-
-
-@login_required
-def unfollow_toggle(request, user_pk):
-    if request.method == 'POST':
-        to_user = User.objects.get(pk=user_pk)
-        request.user.unfollow(to_user)
-    return redirect('posts:post-list')
