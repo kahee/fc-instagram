@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, get_user_model, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 from .forms import SignupForm
@@ -135,7 +136,8 @@ def signup_bak(request):
     return render(request, 'members/signup.html', context)
 
 
-def follow_toggle(request):
+@login_required
+def follow_toggle(request, user_pk):
     """
     * GET요청은 처리하지 않음
     * 로그인 된 상태에서만 작동
@@ -147,3 +149,16 @@ def follow_toggle(request):
     :param request:
     :return:
     """
+    if request.method == 'POST':
+        to_user = User.objects.get(pk=user_pk)
+        request.user.follow(to_user)
+
+    return redirect('posts:post-list')
+
+
+@login_required
+def unfollow_toggle(request, user_pk):
+    if request.method == 'POST':
+        to_user = User.objects.get(pk=user_pk)
+        request.user.unfollow(to_user)
+    return redirect('posts:post-list')

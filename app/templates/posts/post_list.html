@@ -24,10 +24,21 @@
                                  alt="">
                         {% endif %}
                         <span>{{ post.author.username }}</span>
-                        <form action="" method="POST" style="display: inline-block;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-primary btn-sm">+ Follow</button>
-                        </form>
+                        {% if not post.author == user %}
+                            {% if not post.author in user.following %}
+                                <form action="{% url 'members:follow' user_pk=post.author.pk %}" method="POST"
+                                      style="display: inline-block;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-primary btn-sm">+ Follow</button>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'members:unfollow' user_pk=post.author.pk %}" method="POST"
+                                      style="display: inline-block;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm"> Following</button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     <form action="{% url 'posts:post-delete' pk=post.pk %}" method="POST" class="float-right">
                         {% csrf_token %}
