@@ -26,8 +26,7 @@ class PostLike(models.Model):
         )
 
     def __str__(self):
-        return 'PostLike (User:{user}, Post:{post}, Created:{created})'.format(
-            artist=self.post,
+        return 'PostLike (User:{user}, Post:{post})'.format(
+            post=self.post,
             user=self.user.username,
-            created=datetime.strftime(self.created_date, '%Y.%m.%d'),
         )
