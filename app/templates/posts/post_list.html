@@ -2,122 +2,124 @@
 {% load comment_extra %}
 {% block content %}
     {% for post in posts %}
-        <div class="card mb-3">
-            <div class="card-header">
-                <div>
-                    <!--
-                        1. app/static폴더 만들기
-                        2. settings.py에 STATIC_DIR변수에 해당 경로 추가
-                        3. STATICFILES_DIRS에 위 변수 추가
-                        4. 아래에서 post.author.img_profile이 존재하지 않으면
-                                /static/images/blank_user.png <- 이 경로를 src로 사용한다
-                                 이 때, 'static'태그를 사용
+        {% if not post.author in user.block_users %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div>
+                        <!--
+                            1. app/static폴더 만들기
+                            2. settings.py에 STATIC_DIR변수에 해당 경로 추가
+                            3. STATICFILES_DIRS에 위 변수 추가
+                            4. 아래에서 post.author.img_profile이 존재하지 않으면
+                                    /static/images/blank_user.png <- 이 경로를 src로 사용한다
+                                     이 때, 'static'태그를 사용
 
-                        숙제1. 댓글달기 구현
-                        숙제2. Post좋아요 구현 (현재 좋아요 상태인지 표시, 좋아요 상태면 해제하도록 함)
-                    -->
-                    <div class="float-left">
-                        {% if post.author.img_profile %}
-                            <img src="{{ post.author.img_profile.url }}"
-                                 style="width: 30px;"
-                                 class="rounded-circle float-left mr-1"
-                                 alt="">
-                        {% endif %}
-                        <span>{{ post.author.username }}</span>
-
-                        {% if not post.author == user %}
-                            {% if not post.author in user.following %}
-                                <form action="{% url 'members:follow' user_pk=post.author.pk %}" method="POST"
-                                      style="display: inline-block;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-primary btn-sm">+ Follow</button>
-                                </form>
-                            {% else %}
-                                <form action="{% url 'members:unfollow' user_pk=post.author.pk %}" method="POST"
-                                      style="display: inline-block;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary btn-sm"> Following</button>
-                                </form>
+                            숙제1. 댓글달기 구현
+                            숙제2. Post좋아요 구현 (현재 좋아요 상태인지 표시, 좋아요 상태면 해제하도록 함)
+                        -->
+                        <div class="float-left">
+                            {% if post.author.img_profile %}
+                                <img src="{{ post.author.img_profile.url }}"
+                                     style="width: 30px;"
+                                     class="rounded-circle float-left mr-1"
+                                     alt="">
                             {% endif %}
-                        {% endif %}
+                            <span>{{ post.author.username }}</span>
 
-
-                        <form action="{% url 'members:block' user_pk=post.author.pk %}" method="POST"
-                              style="display: inline-block;">
-                            {% csrf_token %}
                             {% if not post.author == user %}
-                                {% if not post.author in user.block_users %}
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">- 차단하기</button>
+                                {% if not post.author in user.following %}
+                                    <form action="{% url 'members:follow' user_pk=post.author.pk %}" method="POST"
+                                          style="display: inline-block;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">+ Follow</button>
+                                    </form>
                                 {% else %}
-                                    <button type="submit" class="btn btn-danger btn-sm">- 차단해제</button>
+                                    <form action="{% url 'members:unfollow' user_pk=post.author.pk %}" method="POST"
+                                          style="display: inline-block;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary btn-sm"> Following</button>
+                                    </form>
                                 {% endif %}
+                            {% endif %}
+
+
+                            <form action="{% url 'members:block' user_pk=post.author.pk %}" method="POST"
+                                  style="display: inline-block;">
+                                {% csrf_token %}
+                                {% if not post.author == user %}
+                                    {% if not post.author in user.block_users %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">- 차단하기</button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-danger btn-sm">- 차단해제</button>
+                                    {% endif %}
+                                {% endif %}
+                            </form>
+
+
+                        </div>
+                        <form action="{% url 'posts:post-delete' pk=post.pk %}" method="POST" class="float-right">
+                            {% csrf_token %}
+                            <button class="btn btn-danger btn-sm">지우기</button>
+                        </form>
+
+                        <form action="{% url 'posts:post-like' pk=post.pk %}" method="POST" class="float-right">
+                            {% csrf_token %}
+                            {% if user in post.like_users.all %}
+                                <button class="btn  btn-primary btn-sm">좋아요</button>
+                            {% else %}
+                                <button class="btn  btn-outline-primary btn-sm">좋아요</button>
                             {% endif %}
                         </form>
 
-
                     </div>
-                    <form action="{% url 'posts:post-delete' pk=post.pk %}" method="POST" class="float-right">
-                        {% csrf_token %}
-                        <button class="btn btn-danger btn-sm">지우기</button>
-                    </form>
+                </div>
 
-                    <form action="{% url 'posts:post-like' pk=post.pk %}" method="POST" class="float-right">
-                        {% csrf_token %}
-                        {% if user in post.like_users.all %}
-                            <button class="btn  btn-primary btn-sm">좋아요</button>
-                        {% else %}
-                            <button class="btn  btn-outline-primary btn-sm">좋아요</button>
-                        {% endif %}
-                    </form>
+                <div class="card-body p-0" style="line-height: 0;">
+                </div>
+                <div>
+                    {% if post.photo %}
+                        <img width="100%" src="{{ post.photo.url }}" alt="">
+                    {% endif %}
+                </div>
 
+                <div>
+                    {% if comments %}
+                        <ul class="list-group">
+                            {% for comment in post|get_comment %}
+                                <li class="list-group-item">{{ comment.author }} - {{ comment.content }}
+                                    <ul>
+                                        {% for re_comment in comment.re_comments.all %}
+                                            <li>{{ re_comment.author }} - {{ re_comment.content }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <form action="{% url 'posts:re-comment-create' pk=comment.pk %}" method="POST">
+                                        {% csrf_token %}
+                                        {% for comment_field in comment_form %}
+                                            {{ comment_field }}
+                                        {% endfor %}
+                                        <button type="submit" style='width:10%;float: right;'
+                                                class="btn btn-outline-dark btn-sm">
+                                            답글 달기
+                                        </button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <form action="{% url 'posts:comment-create' pk=post.pk %}" method="POST">
+                        {% csrf_token %}
+                        {% for comment_field in comment_form %}
+                            {{ comment_field }}
+                        {% endfor %}
+                        <button type="submit" style='width:10%;float:right;' class="btn btn-outline-primary btn-sm">댓글
+                            달기
+                        </button>
+                    </form>
                 </div>
             </div>
-
-            <div class="card-body p-0" style="line-height: 0;">
-            </div>
-            <div>
-                {% if post.photo %}
-                    <img width="100%" src="{{ post.photo.url }}" alt="">
-                {% endif %}
-            </div>
-
-            <div>
-                {% if comments %}
-                    <ul class="list-group">
-                        {% for comment in post|get_comment %}
-                            <li class="list-group-item">{{ comment.author }} - {{ comment.content }}
-                                <ul>
-                                    {% for re_comment in comment.re_comments.all %}
-                                        <li>{{ re_comment.author }} - {{ re_comment.content }}</li>
-                                    {% endfor %}
-                                </ul>
-                                <form action="{% url 'posts:re-comment-create' pk=comment.pk %}" method="POST">
-                                    {% csrf_token %}
-                                    {% for comment_field in comment_form %}
-                                        {{ comment_field }}
-                                    {% endfor %}
-                                    <button type="submit" style='width:10%;float: right;'
-                                            class="btn btn-outline-dark btn-sm">
-                                        답글 달기
-                                    </button>
-                                </form>
-                            </li>
-                        {% endfor %}
-
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <form action="{% url 'posts:comment-create' pk=post.pk %}" method="POST">
-                    {% csrf_token %}
-                    {% for comment_field in comment_form %}
-                        {{ comment_field }}
-                    {% endfor %}
-                    <button type="submit" style='width:10%;float:right;' class="btn btn-outline-primary btn-sm">댓글 달기
-                    </button>
-                </form>
-            </div>
-        </div>
-
+        {% endif %}
     {% endfor %}
 {% endblock %}
