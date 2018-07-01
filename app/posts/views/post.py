@@ -22,7 +22,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from ..forms import PostForm, PostModelForm, CommentModelForm
 from ..models import Post, Comment
@@ -46,9 +46,15 @@ def post_list(request):
     return render(request, 'posts/post_list.html', context)
 
 
+@require_GET
+def search(request):
+    tag = request.GET['tag']
+
+    return redirect('posts:search-post-list', tag)
+
+
 def search_post_result(request, tag):
     posts = Post.objects.filter(tags__name__contains=tag).distinct()
-
     context = {
         'posts': posts,
     }
