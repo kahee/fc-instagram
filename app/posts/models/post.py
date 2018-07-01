@@ -7,7 +7,10 @@ class Post(models.Model):
     photo = models.ImageField(upload_to='post', blank=True)
     content = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    tags = models.ManyToManyField(
+        'posts.HashTag',
+        blank=True
+    )
     # 포스트를 좋아요 누른 유저
     like_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
