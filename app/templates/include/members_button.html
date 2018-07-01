@@ -1,0 +1,36 @@
+<li class="list-group-item">
+    {% if member.img_profile %}
+        <img src="{{ member.img_profile.url }}"
+             style="width: 30px;"
+             class="rounded-circle float-left mr-1"
+             alt="">
+    {% endif %}
+
+    {% if not member in user.block_users %}
+        <form action="{% url 'members:block' user_pk=member.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-sm float-right">차단하기</button>
+        </form>
+    {% else %}
+        <form action="{% url 'members:unblock' user_pk=member.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm float-right">차단해제</button>
+        </form>
+    {% endif %}
+
+    {% if not member in user.following %}
+        <form action="{% url 'members:follow' user_pk=member.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-primary btn-sm float-right">+ Follow</button>
+        </form>
+    {% else %}
+        <form action="{% url 'members:unfollow' user_pk=member.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-sm float-right"> Following</button>
+        </form>
+    {% endif %}
+
+    {{ member.username }}
+
+</li>
+

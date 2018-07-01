@@ -11,12 +11,14 @@ User = get_user_model()
 def my_page(request):
     following_users = request.user.following
     follower_users = request.user.followers
+    block_users = request.user.block_users
 
     context = {
         'following_users': following_users,
         'follower_users': follower_users,
+        'block_users': block_users,
     }
-    return render(request, 'members/mypage.html', context )
+    return render(request, 'members/mypage.html', context)
 
 
 def login_view(request):

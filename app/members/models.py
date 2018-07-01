@@ -27,8 +27,12 @@ class User(AbstractUser):
         return self.username
 
     def follow(self, to_user):
-        if self.relations_by_from_user.filter(to_user=to_user).exists():
-            raise DuplicateRelationException(from_user=self, to_user=to_user, relation_type='follow')
+        q = self.relations_by_from_user.filter(to_user=to_user)
+
+        if q:
+            user = self.relations_by_from_user.get(to_user=to_user)
+            user.relation_type = Relation.RELATION_TYPE_FOLLOW
+            user.save()
 
         return self.relations_by_from_user.create(
             to_user=to_user,
