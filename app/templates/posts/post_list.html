@@ -76,6 +76,10 @@
                     {% if post.photo %}
                         <img width="100%" src="{{ post.photo.url }}" alt="">
                     {% endif %}
+                    <div class="container p-2">
+                        <p>{{ post.content_html|safe|linebreaks }}</p>
+                    </div>
+
                 </div>
 
                 <div>

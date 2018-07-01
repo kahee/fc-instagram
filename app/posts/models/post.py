@@ -1,8 +1,14 @@
+import re
+
 from django.conf import settings
 from django.db import models
 
+from ..models import HashTag
+
 
 class Post(models.Model):
+    PATTERN_HASHTAG = re.compile(r'#(?P<tag>\w+)')
+
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='post', blank=True)
     content = models.TextField(blank=True)
@@ -21,6 +27,16 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-pk']
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for tag_name in re.findall(self.PATTERN_HASHTAG, self.content):
+            tag, tag_create = HashTag.objects.get_or_create(name=tag_name)
+            self.tags.add(tag)
+
+    @property
+    def content_html(self):
+        return re.sub(self.PATTERN_HASHTAG, '<a href="/posts/tags/\g<tag>">#\g<tag></a>', self.content)
 
     def toggle_like_user(self, user):
         """

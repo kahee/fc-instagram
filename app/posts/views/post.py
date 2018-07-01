@@ -46,6 +46,16 @@ def post_list(request):
     return render(request, 'posts/post_list.html', context)
 
 
+def search_post_result(request, tag):
+    posts = Post.objects.filter(tags__name__contains=tag).distinct()
+
+    context = {
+        'posts': posts,
+    }
+
+    return render(request, 'posts/search_post_list.html', context)
+
+
 def post_detail(request, pk):
     post = Post.objects.get(pk=pk)
     context = {
