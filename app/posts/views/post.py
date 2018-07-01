@@ -49,7 +49,6 @@ def post_list(request):
 @require_GET
 def search(request):
     tag = request.GET['tag']
-
     return redirect('posts:search-post-list', tag)
 
 
