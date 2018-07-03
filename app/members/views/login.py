@@ -16,7 +16,7 @@ def facebook_login(request):
 
     if user:
         # 페이스북으로 로그인시 이미 유저가 있는 경우
-        login(request,user)
+        login(request, user)
         return redirect('index')
 
     if request.method == 'POST':
