@@ -1,12 +1,15 @@
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files import File
+
+from .uitls import download, get_buffer_ext
 
 User = get_user_model()
 
 
 class FacebookBackend:
-    def authenticate(self, request, code):
+    def authenticate(self, request, code, extra_info=None):
         """
         Facebook의 Authorization Code가 주어졌을 때
         facebook의 user_id에 해당하는  User가 있으면 해당 User리턴 없으면 생성
@@ -61,10 +64,10 @@ class FacebookBackend:
 
             return response.json()
 
-        def create_user_from_facebook_user_info(user_info):
+        def create_user_from_facebook_user_info(user_info, extra_info):
             facebook_user_id = user_info['id']
-            first_name = user_info.get('first_name','')
-            last_name = user_info.get('last_name','')
+            first_name = user_info.get('first_name', '')
+            last_name = user_info.get('last_name', '')
             url_img_profile = user_info['picture']['data']['url']
 
             user, user_created = User.objects.get_or_create(
@@ -72,14 +75,30 @@ class FacebookBackend:
                 defaults={
                     'first_name': first_name,
                     'last_name': last_name,
+                    'email': extra_info.get('email', ''),
+                    'gender': extra_info.get('gender', ''),
+                    'site': extra_info.get('site', ''),
+
                 },
             )
+
+            if not user.img_profile:
+                temp_file = download(url_img_profile)
+                ext = get_buffer_ext(temp_file)
+                user.img_profile.save(f'{user.pk}.{ext}', File(temp_file))
             return user, user_created
 
         access_token = get_access_token(code)
         user_info = get_user_info(access_token)
-        user, user_created = create_user_from_facebook_user_info(user_info)
-        return user
+
+        if extra_info is not None:
+            print(extra_info)
+            user, user_created = create_user_from_facebook_user_info(user_info, extra_info)
+            return user
+        else:
+            facebook_user_id = user_info['id']
+            user = User.objects.get(username=facebook_user_id)
+            return user
 
     def get_user(self, user_id):
         try:

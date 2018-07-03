@@ -55,7 +55,7 @@ def login_view(request):
 
             # session_id값을 django_sessions테이블에 저장, 데이터는 user와 연결됨
             # 이 함수 실행 후 돌려줄 HTTP Response에는 Set-Cookie헤더를 추가, 내용은 sessionid=<session값>
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             print(request.GET)
 
             # GET parameter에 'next'값이 전달되면 해당 값으로 redirect
@@ -85,7 +85,7 @@ def signup(request):
         form = SignupForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.signup()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('index')
     else:
         form = SignupForm()

@@ -16,6 +16,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': (
                 'last_name',
                 'first_name',
+                'user_type',
                 'gender',
                 'email',
                 'img_profile',

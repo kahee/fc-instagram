@@ -5,8 +5,23 @@ from django.core.exceptions import ValidationError
 User = get_user_model()
 
 
-class SignupModelForm(forms.ModelForm):
-    pass
+class FacebookModelForm(forms.ModelForm):
+    site = forms.URLField(
+        label='사이트URL',
+        widget=forms.URLInput(
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=False,
+    )
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'gender',
+            'site',
+        )
 
 
 class SignupForm(forms.Form):

@@ -10,10 +10,15 @@ class User(AbstractUser):
         ('f', '여성'),
         ('x', '선택안함'),
     )
+    USER_TYPE = (
+        ('G','일반유저'),
+        ('F','페이스북 유저'),
+    )
     img_profile = models.ImageField(upload_to='user', blank=True)
     site = models.URLField(blank=True)
     introduce = models.TextField(blank=True)
     gender = models.CharField(max_length=1, choices=CHOICES_GENDER)
+    user_type = models.CharField(max_length=1, choices=USER_TYPE, default='G')
     to_relation_users = models.ManyToManyField(
         'self',
         through='Relation',
