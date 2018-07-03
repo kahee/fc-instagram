@@ -7,11 +7,11 @@ class CommentModelForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = [
-            'content',
+            '_content',
         ]
 
         widgets = {
-            'content': forms.TextInput(
+            '_content': forms.TextInput(
                 attrs={
                     'class': ('form-control', 'float-left', 'form-control',),
                     'style': 'width:90%',

@@ -37,11 +37,9 @@ from ..models import Post, Comment
 def post_list(request):
     form = CommentModelForm()
     posts = Post.objects.all()
-    comments = Comment.objects.all()
     context = {
         'posts': posts,
         'comment_form': form,
-        'comments': comments,
     }
     return render(request, 'posts/post_list.html', context)
 
@@ -87,7 +85,7 @@ def post_create(request):
     # PostModelForm을 사용
     #  form = PostModelForm(request.POST, request.FILES)
     #  post = form.save(commit=False)
-    #  post.author = request.user
+    #  post._author = request.user
     #  post.save()
     if request.method == 'POST':
         form = PostModelForm(request.POST, request.FILES)
@@ -124,7 +122,7 @@ def post_create_without_form(request):
         post = Post(
             author=request.user,
             photo=request.FILES['photo'],
-            content=request.POST['content'],
+            content=request.POST['_content'],
         )
         post.save()
         return redirect('posts:post-detail', pk=post.pk)

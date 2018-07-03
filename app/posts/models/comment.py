@@ -10,19 +10,41 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         related_name='comments',
     )
-    author = models.ForeignKey(
+    _author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='comment_by_user'
+        related_name='comments'
     )
-    content = models.CharField(
+    _content = models.CharField(
         max_length=255,
     )
-    re_comment = models.ForeignKey(
+    parent_comment = models.ForeignKey(
         'self',
-        on_delete=models.CASCADE,
-        related_name='re_comments',
+        on_delete=models.SET_NULL,
+        related_name='comments',
         blank=True,
         null=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    is_deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Comment (post: {self.post.pk}, author:{self.author.username})'
+
+    @property
+    def author(self):
+        if self.is_deleted:
+            return None
+        return self._author
+
+    @property
+    def content(self):
+        if self.is_deleted:
+            return '삭제된 댓글입니다.'
+        return self._content
+
+    def delete(self, *args, **kwargs):
+        self.is_deleted = True
+        self.save()

@@ -5,5 +5,5 @@ register = template.Library()
 
 @register.filter
 def get_comment(value):
-    post_comments = value.comments.filter(re_comment_id=None)
+    post_comments = value.comments.filter(parent_comment=None)
     return post_comments

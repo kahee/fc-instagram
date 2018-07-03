@@ -1,0 +1,20 @@
+<li>
+    <div>({{ comment.pk }}){{ comment.author.username }} | {{ comment.content }}</div>
+    <form action="{% url 'posts:child-comment-create' post_pk=post.pk comment_pk=comment.pk %}" method="POST">
+        {% csrf_token %}
+        {% for comment_field in comment_form %}
+            {{ comment_field }}
+        {% endfor %}
+        <button type="submit" style='width:10%;float: right;'
+                class="btn btn-outline-dark btn-sm">
+            답글 달기
+        </button>
+    </form>
+    {% if comment.comments.exists %}
+        <ul>
+            {% for child_comment in comment.comments.all %}
+                {% include 'include/comment.html' with comment=child_comment %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>
