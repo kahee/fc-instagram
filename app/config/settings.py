@@ -26,6 +26,12 @@ print('MEDIA_ROOT:', MEDIA_ROOT)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'zjs7dymub=^!pss^3&cih4)vs$1ro2@zfu!50^sw+b1-6v)88^'
 
+
+#Facebook
+FACEBOOK_APP_ID = '160190031519813'
+FACEBOOK_APP_SECRET_CODE = '9984f27ad9935e6c97c76ad68bf55dc0'
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

@@ -12,4 +12,5 @@ urlpatterns = [
     path('<int:user_pk>/block/', views.block_toggle, name='block'),
     path('<int:user_pk>/unblock/', views.unblock_toggle, name='unblock'),
     path('mypage/', views.my_page, name='my-page'),
+    path('facebook-login/', views.facebook_login, name='facebook-login'),
 ]

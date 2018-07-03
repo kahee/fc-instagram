@@ -1,3 +1,8 @@
+import json
+
+import requests
+from django.conf import settings
+
 from django.contrib.auth import authenticate, login, get_user_model, logout
 from django.shortcuts import render, redirect
 
@@ -6,6 +11,64 @@ from ..forms import SignupForm
 # User클래스 자체를 가져올때는 get_user_model()
 # ForeignKey에 User모델을 지정할때는 settings.AUTH_USER_MODEL
 User = get_user_model()
+
+
+def facebook_login(request):
+    code = request.GET['code']
+    url = "https://graph.facebook.com/v3.0/oauth/access_token?"
+
+    params = {
+        'client_id': settings.FACEBOOK_APP_ID,
+        'redirect_uri': 'http://localhost:8000/members/facebook-login/',
+        'client_secret': settings.FACEBOOK_APP_SECRET_CODE,
+        'code': code,
+    }
+
+    response = requests.get(url, params=params)
+    # 파이썬에 내장된 json모듈을 사용해서, JSON 형식의 텍스트를 파이썬 Object로 변환
+    # response_dict = json.loads(response.text)
+    response_dict = response.json()
+    access_token = response_dict['access_token']
+
+    debug_url = 'https://graph.facebook.com/debug_token?'
+    debug_url_params = {
+        'input_token': access_token,
+        'access_token': settings.FACEBOOK_APP_ID + '|' + settings.FACEBOOK_APP_SECRET_CODE,
+    }
+
+    response_debug = requests.get(debug_url, debug_url_params)
+
+    url = 'https://graph.facebook.com/v3.0/me'
+    params = {
+        'fields': ','.join([
+            'id',
+            'name',
+            'first_name',
+            'last_name',
+            'picture',
+        ]),
+        'access_token': access_token,
+    }
+    response = requests.get(url, params)
+    response_dict = response.json()
+
+    facebook_user_id = response_dict['id']
+    first_name = response_dict['first_name']
+    last_name = response_dict['last_name']
+    url_img_profile = response_dict['picture']['data']['url']
+
+    user, user_created = User.objects.get_or_create(
+        username=facebook_user_id,
+        defaults={
+            'first_name': first_name,
+            'last_name': last_name,
+        },
+    )
+    # facebook 유저 객체
+
+
+
+    return render(request, 'members/facebook_login.html',)
 
 
 def my_page(request):
